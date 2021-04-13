@@ -131,70 +131,86 @@ class classKona():
 #urllib.request.urlretrieve(url, '.\\'+folder_name+'\\test.png')
 
 class LabelUpdate(threading.Thread):
+
     def __init__(self, _window):
         threading.Thread.__init__(self)
         self.win = _window
+
     def run(self):
         while True:
             time.sleep(0.1)
             self.win.log.set(LOGTEXT)
-            self.win.btn.set(BTNTEXT)
+            self.win.btnStr.set(BTNTEXT)
+
 
 class NewThread(threading.Thread):
+
     def __init__(self, _window):
         threading.Thread.__init__(self)
         self.win = _window
+
     def run(self):
         print(type(self.win))
         instance = classKona(self.win.str1.get(), self.win.str2.get())
 
+
 class Application(tk.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        #self.pack()
         self.create_widgets()
 
-
-
     def create_widgets(self):
+
+        # 일반라벨
         self.lb1 = tk.Label(window, text="TAG : ").grid(row=0,column=0)
         self.lb2 = tk.Label(window, text="NUM : ").grid(row=1,column=0)
+
+        # 업데이트용 문자열변수와 라벨
         self.log = tk.StringVar()
         self.log.set(":3")
         self.lb3 = tk.Label(window, textvariable=self.log).grid(row=3,column=0,columnspan=3)
+
+        # 링크주소 라벨과 기능
         self.link1 = tk.Label(window, text="https://konachan.com/post", fg="blue", cursor="hand2")
         self.link1.grid(row=4,column=0,columnspan=3)        
         self.link1.bind("<Button-1>", lambda e: callback("https://konachan.com/post"))
 
+        # 텍스트 필드 읽어올 문자열변수
         self.str1=tk.StringVar()
         self.str2=tk.StringVar()
-        # self.lb1.pack(side="left")
+
         self.input_tag_field = tk.Entry(window, textvariable=self.str1).grid(row=0,column=1,columnspan=2)
-        # self.input_tag_field.pack(side="right")
-        # self.lb2.pack(side="left")
         self.input_num_field = tk.Entry(window, textvariable=self.str2).grid(row=1,column=1,columnspan=2)
-        # self.input_num_field.pack(side="right")
-        self.btn = tk.StringVar()
-        self.btn.set("btn")
-        self.hi_there = tk.Button(window, textvariable=self.btn, width=10, height=4)
-        #self.hi_there["text"] = "Hello World\n(click me)"
-        self.hi_there["command"] = self.say_hi
-        self.hi_there.grid(row=0,column=3,rowspan=3)
-        #self.hi_there.pack(side="top")
+        
+        # 다운로드 버튼에 표시할 문자열 변수, 버튼변수, 클릭 시 실행할 함수
+        self.btnStr = tk.StringVar()
+        self.btnStr.set("tmp button text")
+        self.btn_dl = tk.Button(window, textvariable=self.btnStr, width=10, height=4)
+
+        self.btn_dl["command"] = self.downloadStart
+        self.btn_dl.grid(row=0,column=3,rowspan=3)
+
+        # 체크확인용 변수, 체크박스
         self.v1=tk.IntVar()
         self.check1 = tk.Checkbutton(window, text="Safe", variable = self.v1, command = self.saftySetting)
         self.check1.select()
+
         self.v2=tk.IntVar()
         self.check2 = tk.Checkbutton(window, text="+R18", variable = self.v2, command = self.saftySetting)
+
         self.check1.grid(row=2,column=1)
         self.check2.grid(row=2,column=2)
 
-        self.quit = tk.Button(window, text="QUIT", fg="red",
-                              command=self.quitApp,width=10, height=2)
+        # 버튼(종료용도)
+        self.quit = tk.Button(window, text="QUIT", fg="red", command=self.quitApp, width=10, height=2)
         self.quit.grid(row=3,column=3,rowspan=2)
+
+        # 이후 0.1초 간격으로 라벨 계속 업데이트. 이렇게 해도 되기는 되서 함... 좋은 방법일 것 같진 않음.
         LabelUpdate(self).start()
 
+    # 체크박스 변동 시 변수조작
     def saftySetting(self):
         global SAFETY
         if(self.v1.get()==0 and self.v2.get()==0):
@@ -208,26 +224,38 @@ class Application(tk.Frame):
         print("1 : "+str(self.v1.get()))
         print("2 : "+str(self.v2.get()))
 
-    def say_hi(self):
+    # 체크박스 체크 확인 후, 다운로드용 스레드 시작
+    def downloadStart(self):
+
         global LOGTEXT
         print("PUSH DL BUTTON")
+
         if(self.v1.get()==0 and self.v2.get()==0):
             LOGTEXT = "체크박스가 선택되지 않았습니다."
             return
+
         NewThread(self).start()
+        
+    # 종료 버튼 클릭
     def quitApp(self):
         sys.exit()
 
 
 window = tk.Tk()
+
+# 닫기 버튼 시 함수
 def on_closing():
-    if tk.messagebox.askokcancel("Quit", "Do you want to quit?"):
+    if tk.messagebox.askokcancel("Quit", "Do you want to quit?"): # 이거 안하면 왠진 모르겠는데 안꺼짐;; 타임슬립 등 넣어도 마찬가지
         sys.exit()
 window.protocol("WM_DELETE_WINDOW", on_closing)
+
+# 타이틀, 파일아이콘, 윈도우상단아이콘, 윈도우크기, 크기재설정여부
 window.title("KONA_DL ver=0.1")
 window.iconbitmap(default='icon.ico')
 window.tk.call('wm', 'iconphoto', window._w, tk.PhotoImage(file='./icon.png'))
 window.geometry("272x120+1200+200")
 window.resizable(False,False)
+
+# 앱 시작
 app = Application(master=window)
 app.mainloop()
