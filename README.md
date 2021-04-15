@@ -1,7 +1,18 @@
 # konachan_downloader
+
+### 다운로드 시
+
+github에서 exe 실행파일만 내려받을 경우, 어쨰서인지 실행이 안됨.
+아래와 같이 [압축파일](https://github.com/happylee789/konachan_downloader/archive/refs/heads/main.zip)로 받은 후, dist 폴더 안의 실행파일만 따로 빼서 사용 가능
+
+![캡처4](https://user-images.githubusercontent.com/21221633/114849500-c700f880-9e1a-11eb-9eea-74c1fd7960f8.PNG)
+
+애플리케이션 스크린샷
+
 ![캡처](https://user-images.githubusercontent.com/21221633/114842139-881b7480-9e13-11eb-9926-710f91e3bbda.PNG)
 
 ![캡처2](https://user-images.githubusercontent.com/21221633/114843028-5d7deb80-9e14-11eb-956a-d7baf926d680.PNG)
+
 
 
 ## 사용방법
